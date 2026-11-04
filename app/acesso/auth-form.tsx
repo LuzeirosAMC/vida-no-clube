@@ -1,0 +1,7 @@
+"use client";
+import { useState } from "react";
+export function AuthForm({ mode }: { mode: "login" | "register" }) {
+  const [error, setError] = useState(""); const [busy, setBusy] = useState(false);
+  async function submit(event: React.FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); setError(""); const form = new FormData(event.currentTarget); const response = await fetch(`/api/auth/${mode === "login" ? "login" : "register"}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ login: form.get("login"), password: form.get("password"), birthDate: form.get("birthDate") }) }); const result = await response.json().catch(() => ({})); if (!response.ok) { setError(result.error ?? "Não foi possível concluir. Tente novamente."); setBusy(false); return; } window.location.href = result.role === "member" ? "/minha-conta" : "/portal"; }
+  return <form className="auth-form" onSubmit={submit}><label>Login<input name="login" autoComplete="username" minLength={3} maxLength={32} required /></label><label>Senha<input name="password" type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} minLength={8} maxLength={128} required /></label>{mode === "register" && <label>Data de nascimento<input name="birthDate" type="date" autoComplete="bday" required /></label>}{error && <p className="auth-error" role="alert">{error}</p>}<button type="submit" disabled={busy}>{busy ? "Aguarde…" : mode === "login" ? "Entrar" : "Criar conta"}</button></form>;
+}
