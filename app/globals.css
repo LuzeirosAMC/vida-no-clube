@@ -24,6 +24,33 @@ html {
   scroll-padding-top: 90px;
 }
 
+.reveal-ready .scroll-reveal {
+  opacity: 0;
+  transform: translateY(32px) scale(0.985);
+  transition:
+    opacity 0.7s ease var(--reveal-delay, 0ms),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal-ready .scroll-reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal-ready .scroll-reveal,
+  .reveal-ready .scroll-reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 html,
 body {
   max-width: 100%;
