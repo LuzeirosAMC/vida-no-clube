@@ -16,7 +16,6 @@ const revealSelector = [
 
 export function ScrollEffects() {
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const revealItems = Array.from(document.querySelectorAll<HTMLElement>(revealSelector));
 
     revealItems.forEach((item, index) => {
@@ -26,23 +25,29 @@ export function ScrollEffects() {
 
     document.body.classList.add("reveal-ready");
 
-    const observer = reduceMotion
-      ? null
-      : new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              entry.target.classList.add("is-revealed");
-              observer?.unobserve(entry.target);
-            });
-          },
-          { rootMargin: "0px 0px -9%", threshold: 0.08 },
-        );
+    let animationFrame = 0;
 
-    revealItems.forEach((item) => {
-      if (reduceMotion) item.classList.add("is-revealed");
-      else observer?.observe(item);
-    });
+    const revealVisibleItems = () => {
+      animationFrame = 0;
+      const revealLine = window.innerHeight * 0.88;
+
+      revealItems.forEach((item) => {
+        if (item.classList.contains("is-revealed")) return;
+        const bounds = item.getBoundingClientRect();
+        if (bounds.top <= revealLine && bounds.bottom >= 0) {
+          item.classList.add("is-revealed");
+        }
+      });
+    };
+
+    const handleScroll = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(revealVisibleItems);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    window.requestAnimationFrame(revealVisibleItems);
 
     const handleAnchorClick = (event: MouseEvent) => {
       const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
@@ -55,7 +60,7 @@ export function ScrollEffects() {
       if (!destination) return;
 
       event.preventDefault();
-      destination.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      destination.scrollIntoView({ behavior: "smooth", block: "start" });
       window.history.replaceState(null, "", id);
       link.closest("details")?.removeAttribute("open");
     };
@@ -63,7 +68,9 @@ export function ScrollEffects() {
     document.addEventListener("click", handleAnchorClick);
 
     return () => {
-      observer?.disconnect();
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
       document.removeEventListener("click", handleAnchorClick);
       document.body.classList.remove("reveal-ready");
       revealItems.forEach((item) => {
