@@ -69,6 +69,7 @@ const activities = [
     title: "Aventura ao ar livre",
     description:
       "Acampamentos, desafios e experiências que ensinam autonomia, cuidado e trabalho em equipe.",
+    href: "https://www.instagram.com/p/DZgEPc9vqaA/",
   },
   {
     icon: Music2,
@@ -76,6 +77,7 @@ const activities = [
     title: "Fanfarra",
     description:
       "Ritmo, presença e disciplina em uma das tradições que movimentam a vida do clube.",
+    href: "https://www.instagram.com/p/Depwm-6n1lX/?img_index=4",
   },
   {
     icon: Compass,
@@ -83,6 +85,7 @@ const activities = [
     title: "Classes e especialidades",
     description:
       "Aprendizado prático para desenvolver habilidades, curiosidade e responsabilidade.",
+    href: "https://www.instagram.com/stories/highlights/18352995976026850/",
   },
   {
     icon: Heart,
@@ -90,6 +93,7 @@ const activities = [
     title: "Fé e serviço",
     description:
       "Uma comunidade que cresce ao servir, acolher e construir vínculos que atravessam gerações.",
+    href: "https://www.instagram.com/p/DIZDnKFO4tO/?img_index=6",
   },
 ];
 
@@ -378,9 +382,15 @@ export default async function Home() {
                     </div>
                     <h3>{activity.title}</h3>
                     <p>{activity.description}</p>
-                    <span className="activity-corner" aria-hidden="true">
+                    <a
+                      className="activity-corner"
+                      href={activity.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Ver ${activity.title} no Instagram`}
+                    >
                       <ArrowDownRight size={20} />
-                    </span>
+                    </a>
                   </article>
                 );
               })}
