@@ -19,6 +19,8 @@ import { bankDetails } from "../../db/schema";
 
 export const dynamic = "force-dynamic";
 
+const whatsappUrl = `https://wa.me/553194709446?text=${encodeURIComponent("Olá! Gostaria de saber mais sobre as doações!(Vim pelo site! 🤭)")}`;
+
 const destinations = [
   {
     icon: TentTree,
@@ -84,7 +86,7 @@ export default async function DonationsPage() {
             <h2 id="donation-card-title">{bankAvailable ? "Contribua por Pix" : "Doações em preparação"}</h2>
             {bankAvailable ? <div className="bank-public-data"><span>{bank.pixType || "Chave Pix"}</span><strong>{bank.pixKey}</strong><span>Titular</span><strong>{bank.accountHolder}</strong>{bank.bankName && <em>{bank.bankName}</em>}{bank.instructions && <p>{bank.instructions}</p>}</div> : <><p>A chave Pix oficial ainda será confirmada pela direção. Assim que os dados forem fornecidos, este cartão será liberado.</p><div className="donation-pending"><span /> Aguardando os dados oficiais</div></>}
             <a
-              href="https://www.instagram.com/luzeiros.amc/"
+              href={whatsappUrl}
               target="_blank"
               rel="noreferrer"
               className="button button--yellow donation-contact"
