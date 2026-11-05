@@ -101,14 +101,14 @@ export default async function PortalPage() {
           <header className="portal-topbar">
             <div>
               <h1>Visão geral</h1>
-              <p>Primeira versão privada do portal Luzeiros.</p>
+              <p>Painel de gestão do Clube de Desbravadores Luzeiros.</p>
             </div>
             <div className="portal-actions">
-              <span className="portal-status">Ambiente privado</span>
-              <button className="portal-button" type="button" aria-label="Notificações">
+              <span className="portal-status">Acesso protegido</span>
+              <a className="portal-button" href="#revisao" aria-label="Ver itens aguardando revisão">
                 <Bell size={16} />
-              </button>
-              <a className="portal-button portal-button--primary" href="#novo-conteudo">
+              </a>
+              <a className="portal-button portal-button--primary" href="/minha-conta">
                 <Plus size={16} /> Novo conteúdo
               </a>
             </div>
@@ -179,11 +179,11 @@ export default async function PortalPage() {
                 </div>
               </section>
 
-              <div className="portal-note" id="novo-conteudo">
+              <div className="portal-note">
                 <Info size={18} />
                 <span>
-                  Esta é a prévia visual do painel. Contas de membros, uploads e a fila de
-                  aprovação serão conectados ao banco de dados antes da abertura pública.
+                  Contas, relatos, doações e a fila de aprovação estão conectados ao banco
+                  de dados do clube. O envio de fotos será ativado após a liberação do armazenamento.
                 </span>
               </div>
 
