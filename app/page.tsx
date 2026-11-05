@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "../db";
 import { submissions, users } from "../db/schema";
 import {
@@ -100,7 +100,7 @@ const activities = [
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const communityMemories = await getDb().select({ id: submissions.id, title: submissions.title, body: submissions.body, kind: submissions.kind, objectKey: submissions.objectKey, author: users.login, createdAt: submissions.createdAt }).from(submissions).innerJoin(users, eq(submissions.authorId, users.id)).where(eq(submissions.status, "approved")).orderBy(desc(submissions.createdAt)).limit(9);
+  const communityMemories = await getDb().select({ id: submissions.id, title: submissions.title, body: submissions.body, kind: submissions.kind, objectKey: submissions.objectKey, author: users.login, createdAt: submissions.createdAt }).from(submissions).innerJoin(users, eq(submissions.authorId, users.id)).where(and(eq(submissions.status, "approved"), eq(submissions.kind, "comment"))).orderBy(desc(submissions.createdAt)).limit(3);
   return (
     <main>
       <a className="skip-link" href="#conteudo">
@@ -439,7 +439,7 @@ export default async function Home() {
               ))}
             </div>
 
-            {communityMemories.length > 0 && <div className="community-memory-section"><div className="community-memory-heading"><span>Memórias da comunidade</span><h3>Aprovadas pela equipe Luzeiros</h3></div><div className="community-memory-grid">{communityMemories.map(item => <article className="community-memory-card" key={item.id}>{item.kind === "photo" && item.objectKey && <img src={`/api/media/${item.id}`} alt={item.title}/>}<div><small>{item.kind === "photo" ? "Foto" : "Relato"} · {item.author}</small><strong>{item.title}</strong><p>{item.body}</p></div></article>)}</div></div>}
+            {communityMemories.length > 0 && <div className="community-memory-section"><div className="community-memory-heading"><div><span>Memórias da comunidade</span><h3>Aprovadas pela equipe Luzeiros</h3></div><a href="/relatos">Ver todos os relatos <ArrowRight size={16}/></a></div><div className="community-memory-grid">{communityMemories.map(item => <article className="community-memory-card" key={item.id}><div><small>Relato · {item.author}</small><strong>{item.title}</strong><p>{item.body}</p></div></article>)}</div></div>}
 
             <div className="memory-cta">
               <div className="memory-cta-icon">
