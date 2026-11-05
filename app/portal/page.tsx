@@ -49,8 +49,8 @@ const recentContent = [
   {
     image: "/media/42-anos.webp",
     title: "42 anos do Clube Luzeiros",
-    meta: "Verificar autorização de imagem",
-    state: "Em revisão",
+    meta: "Importado do Instagram · coleção inicial",
+    state: "Publicado",
   },
 ];
 
