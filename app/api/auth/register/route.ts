@@ -1,4 +1,4 @@
-import { count, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getDb } from "../../../../db";
 import { users } from "../../../../db/schema";
@@ -18,10 +18,9 @@ export async function POST(request: Request) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) || Number.isNaN(birth.valueOf()) || birth > new Date() || birth < oldest) return fail("Informe uma data de nascimento válida.", 400);
   const db = getDb();
   if ((await db.select({ id: users.id }).from(users).where(eq(users.login, login)).limit(1))[0]) return fail("Este login já está em uso.", 409);
-  const [{ value: userCount }] = await db.select({ value: count() }).from(users);
   const id = crypto.randomUUID();
-  await db.insert(users).values({ id, login, passwordHash: await hashPassword(password), birthDate, role: userCount === 0 ? "director" : "member" });
+  await db.insert(users).values({ id, login, passwordHash: await hashPassword(password), birthDate, role: "guest" });
   await createSession(id);
-  const role = userCount === 0 ? "director" : "member";
-  return formRequest ? NextResponse.redirect(new URL(role === "member" ? "/minha-conta" : "/portal", request.url), 303) : NextResponse.json({ ok: true, role });
+  const role = "guest";
+  return formRequest ? NextResponse.redirect(new URL("/minha-conta", request.url), 303) : NextResponse.json({ ok: true, role });
 }

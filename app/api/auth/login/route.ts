@@ -11,5 +11,6 @@ export async function POST(request: Request) {
   const row = (await getDb().select().from(users).where(eq(users.login, login)).limit(1))[0];
   if (!row || !row.active || !(await verifyPassword(data?.password ?? "", row.passwordHash))) return formRequest ? NextResponse.redirect(new URL(`/acesso?erro=${encodeURIComponent("Login ou senha incorretos.")}`, request.url), 303) : NextResponse.json({ error: "Login ou senha incorretos." }, { status: 401 });
   await createSession(row.id);
-  return formRequest ? NextResponse.redirect(new URL(row.role === "member" ? "/minha-conta" : "/portal", request.url), 303) : NextResponse.json({ ok: true, role: row.role });
+  const contributionRole = row.role === "member" || row.role === "guest";
+  return formRequest ? NextResponse.redirect(new URL(contributionRole ? "/minha-conta" : "/portal", request.url), 303) : NextResponse.json({ ok: true, role: row.role });
 }

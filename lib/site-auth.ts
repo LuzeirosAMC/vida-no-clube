@@ -3,7 +3,7 @@ import { and, eq, gt } from "drizzle-orm";
 import { getDb } from "../db";
 import { sessions, users } from "../db/schema";
 
-export type SiteRole = "director" | "treasurer" | "media" | "member";
+export type SiteRole = "director" | "treasurer" | "media" | "member" | "guest";
 export type SiteUser = {
   id: string;
   login: string;

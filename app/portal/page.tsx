@@ -58,7 +58,7 @@ export default async function PortalPage() {
   const user = await getSiteUser();
   if (!user) redirect("/acesso");
   if (!canAccessDashboard(user.role)) redirect("/minha-conta");
-  const roleNames = { director: "Diretor", treasurer: "Tesoureiro", media: "Mídia", member: "Membro" };
+  const roleNames = { director: "Diretor", treasurer: "Tesoureiro", media: "Mídia", member: "Membro", guest: "Convidado" };
   const db = getDb();
   const moderationRows = canModerate(user.role) ? await db.select({ id: submissions.id, title: submissions.title, body: submissions.body, kind: submissions.kind, status: submissions.status, createdAt: submissions.createdAt, author: users.login, birthDate: users.birthDate }).from(submissions).innerJoin(users, eq(submissions.authorId, users.id)).orderBy(desc(submissions.createdAt)).limit(30) : [];
   const donationRows = canManageDonations(user.role) ? await db.select().from(donationReports).orderBy(desc(donationReports.createdAt)).limit(50) : [];
