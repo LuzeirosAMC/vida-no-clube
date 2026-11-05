@@ -173,8 +173,8 @@ export default async function PortalPage() {
                   <h2>Como a moderação funciona</h2>
                 </div>
                 <div className="workflow">
-                  <WorkflowStep number="1" title="Membro envia" description="Foto, vídeo ou relato entra de forma privada." />
-                  <WorkflowStep number="2" title="Mídia revisa" description="Conteúdo, autorização e contexto são conferidos." />
+                  <WorkflowStep number="1" title="Usuário envia" description="Comentário ou relato entra de forma privada." />
+                  <WorkflowStep number="2" title="Equipe revisa" description="Conteúdo, autoria e contexto são conferidos." />
                   <WorkflowStep number="3" title="Direção publica" description="Somente materiais aprovados ficam visíveis ao público." />
                 </div>
               </section>

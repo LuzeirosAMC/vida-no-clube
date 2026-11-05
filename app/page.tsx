@@ -24,6 +24,9 @@ import {
   Users,
 } from "lucide-react";
 
+const clubProfileUrl = "https://desbravai.com.br/clube/mg/contagem/luzeiros";
+const participationWhatsappUrl = `https://wa.me/553194709446?text=${encodeURIComponent("Olá! Gostaria de saber como participar do Clube Luzeiros. Vim pelo site!")}`;
+
 const gallery = [
   {
     src: "/media/cerimonia-evento.webp",
@@ -253,11 +256,11 @@ export default async function Home() {
               </p>
               <a
                 className="text-link"
-                href="https://clubes.adventistas.org/br/amc/5096/luzeiros/"
+                href={clubProfileUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                Ler o histórico no portal oficial
+                Ler o histórico do clube
                 <ArrowRight size={18} />
               </a>
             </div>
@@ -300,11 +303,11 @@ export default async function Home() {
               </div>
               <a
                 className="text-link"
-                href="https://clubes.adventistas.org/br/amc/5096/luzeiros/"
+                href={clubProfileUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                Ver dados oficiais <ExternalLink size={16} />
+                Ver ficha atual do clube <ExternalLink size={16} />
               </a>
             </div>
 
@@ -435,8 +438,8 @@ export default async function Home() {
               <div>
                 <strong>Você também faz parte dessa memória?</strong>
                 <p>
-                  Membros poderão enviar fotos e relatos pelo portal. A equipe de
-                  mídia revisa tudo antes da publicação.
+                  Membros já podem enviar comentários e relatos pelo portal. O envio
+                  de fotos será liberado após a ativação do armazenamento do clube.
                 </p>
               </div>
               <a className="button button--dark" href="/acesso">
@@ -495,14 +498,14 @@ export default async function Home() {
                   <ChevronRight size={19} />
                 </a>
                 <a
-                  href="https://clubes.adventistas.org/br/amc/5096/luzeiros/"
+                  href={participationWhatsappUrl}
                   target="_blank"
                   rel="noreferrer"
                 >
                   <span className="option-icon"><CalendarDays size={21} /></span>
                   <span>
-                    <small>Pré-inscrição de membro</small>
-                    <strong>Cadastro pelo portal oficial</strong>
+                    <small>Quero participar</small>
+                    <strong>Converse com o clube pelo WhatsApp</strong>
                   </span>
                   <span className="soon-tag soon-tag--link">Acessar</span>
                 </a>

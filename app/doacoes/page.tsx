@@ -129,8 +129,8 @@ export default async function DonationsPage() {
             <h2>Clareza em cada contribuição.</h2>
           </div>
           <p>
-            A versão definitiva terá identificação do responsável, instruções de doação e
-            um canal direto para dúvidas ou solicitação de comprovantes.
+            Os dados publicados são controlados pela direção e podem ser atualizados pela
+            tesouraria. Dúvidas podem ser encaminhadas pelo WhatsApp oficial.
           </p>
         </div>
       </section>
