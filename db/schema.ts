@@ -1,6 +1,8 @@
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+// Fonte de verdade do banco D1. Mudanças aqui devem ser acompanhadas por uma
+// nova migração em drizzle/; alterar apenas este arquivo não modifica produção.
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   login: text("login").notNull().unique(),
@@ -21,6 +23,8 @@ export const sessions = sqliteTable("sessions", {
 });
 
 export const bankDetails = sqliteTable("bank_details", {
+  // Existe uma única linha, sempre com id 1. O campo enabled funciona como o
+  // interruptor público: os dados podem permanecer salvos sem aparecer no site.
   id: integer("id").primaryKey().default(1),
   pixKey: text("pix_key").notNull().default(""),
   pixType: text("pix_type").notNull().default(""),
@@ -33,6 +37,8 @@ export const bankDetails = sqliteTable("bank_details", {
 });
 
 export const donationReports = sqliteTable("donation_reports", {
+  // Um relato de doação não comprova a transferência; a tesouraria ainda deve
+  // classificá-lo como confirmed ou not_found pelo painel.
   id: text("id").primaryKey(),
   donorName: text("donor_name"),
   donorUserId: text("donor_user_id").references(() => users.id, { onDelete: "set null" }),
@@ -46,6 +52,8 @@ export const donationReports = sqliteTable("donation_reports", {
 });
 
 export const submissions = sqliteTable("submissions", {
+  // Fotos ficam privadas no R2. objectKey só é servido pela rota de mídia
+  // depois que status passa para approved.
   id: text("id").primaryKey(),
   authorId: text("author_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   kind: text("kind", { enum: ["comment", "photo"] }).notNull(),
@@ -61,6 +69,7 @@ export const submissions = sqliteTable("submissions", {
 });
 
 export const auditLog = sqliteTable("audit_log", {
+  // Registro append-only das ações administrativas relevantes.
   id: text("id").primaryKey(),
   actorId: text("actor_id").references(() => users.id, { onDelete: "set null" }),
   action: text("action").notNull(),

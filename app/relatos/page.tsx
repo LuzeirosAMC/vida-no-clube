@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { and, desc, eq } from "drizzle-orm";
 import { ArrowLeft, MessageSquareText } from "lucide-react";
 import { getDb } from "../../db";
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default async function StoriesPage() {
+  // Não há paginação ainda porque o volume é pequeno. Se a coleção crescer,
+  // este é o ponto onde devem entrar cursor e limite por página.
   const stories = await getDb()
     .select({
       id: submissions.id,
@@ -30,11 +33,11 @@ export default async function StoriesPage() {
     <main className="stories-page">
       <header className="stories-header">
         <div className="site-shell stories-nav">
-          <a className="portal-brand" href="/">
+          <Link className="portal-brand" href="/">
             <Image src="/media/logo-luzeiros.jpg" alt="" width={46} height={46} />
             <span><strong>Luzeiros</strong><small>Clube de Desbravadores</small></span>
-          </a>
-          <a className="stories-back" href="/#memorias"><ArrowLeft size={17}/> Voltar às memórias</a>
+          </Link>
+          <Link className="stories-back" href="/#memorias"><ArrowLeft size={17}/> Voltar às memórias</Link>
         </div>
       </header>
 

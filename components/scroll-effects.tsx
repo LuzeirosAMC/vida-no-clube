@@ -16,6 +16,8 @@ const revealSelector = [
 
 export function ScrollEffects() {
   useEffect(() => {
+    // A classe só é adicionada depois da hidratação. Assim, sem JavaScript o
+    // conteúdo continua visível em vez de ficar preso em opacity: 0.
     const revealItems = Array.from(document.querySelectorAll<HTMLElement>(revealSelector));
 
     revealItems.forEach((item, index) => {
@@ -28,6 +30,8 @@ export function ScrollEffects() {
     let animationFrame = 0;
 
     const revealVisibleItems = () => {
+      // Medição direta foi escolhida em vez de IntersectionObserver porque
+      // alguns navegadores com movimento reduzido liberavam tudo no carregamento.
       animationFrame = 0;
       const revealLine = window.innerHeight * 0.88;
 
@@ -50,6 +54,8 @@ export function ScrollEffects() {
     window.requestAnimationFrame(revealVisibleItems);
 
     const handleAnchorClick = (event: MouseEvent) => {
+      // Centraliza a navegação suave de todos os links internos e fecha o menu
+      // <details> no celular depois da escolha.
       const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
       if (!link) return;
 

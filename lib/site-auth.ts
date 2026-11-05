@@ -29,6 +29,8 @@ async function sha256(value: string) {
 }
 
 export async function hashPassword(password: string) {
+  // 100 mil iterações é o limite atualmente compatível com o runtime usado no
+  // Worker. O formato inclui algoritmo e custo para permitir migrações futuras.
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 100_000, hash: "SHA-256" }, key, 256);
@@ -38,9 +40,13 @@ export async function hashPassword(password: string) {
 export async function verifyPassword(password: string, stored: string) {
   const [algorithm, iterationsText, saltHex, expected] = stored.split("$");
   if (algorithm !== "pbkdf2-sha256" || !iterationsText || !saltHex || !expected) return false;
+  const iterations = Number(iterationsText);
+  // Impede hashes malformados ou com custo abusivo de consumirem CPU do Worker.
+  if (!Number.isInteger(iterations) || iterations < 10_000 || iterations > 500_000) return false;
+  if (!/^[0-9a-f]{32}$/i.test(saltHex) || !/^[0-9a-f]{64}$/i.test(expected)) return false;
   const salt = new Uint8Array(saltHex.match(/.{1,2}/g)?.map((part) => Number.parseInt(part, 16)) ?? []);
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: Number(iterationsText), hash: "SHA-256" }, key, 256);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations, hash: "SHA-256" }, key, 256);
   const actual = bytesToHex(new Uint8Array(bits));
   if (actual.length !== expected.length) return false;
   let difference = 0;
@@ -49,6 +55,8 @@ export async function verifyPassword(password: string, stored: string) {
 }
 
 export async function createSession(userId: string) {
+  // Somente o hash do token vai para o D1; o token original existe apenas no
+  // cookie HttpOnly do navegador.
   const token = randomHex();
   const expires = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
   await getDb().insert(sessions).values({ id: crypto.randomUUID(), userId, tokenHash: await sha256(token), expiresAt: expires.toISOString() });
@@ -64,6 +72,7 @@ export async function clearSession() {
 }
 
 export async function getSiteUser(): Promise<SiteUser | null> {
+  // Uma sessão só vale se não expirou e se a conta continua ativa.
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
   const rows = await getDb().select({ id: users.id, login: users.login, birthDate: users.birthDate, role: users.role, active: users.active })
@@ -73,6 +82,7 @@ export async function getSiteUser(): Promise<SiteUser | null> {
 }
 
 export function canAccessDashboard(role: SiteRole) {
+  // Convidados e membros usam /minha-conta, nunca o painel administrativo.
   return role === "director" || role === "treasurer" || role === "media";
 }
 
@@ -85,6 +95,8 @@ export function canManageDonations(role: SiteRole) {
 }
 
 export function isMinor(birthDate: string, now = new Date()) {
+  // A data completa permanece privada; as telas autorizadas recebem apenas o
+  // resultado booleano que gera o marcador “Criança”.
   const birth = new Date(`${birthDate}T12:00:00Z`);
   let age = now.getUTCFullYear() - birth.getUTCFullYear();
   const month = now.getUTCMonth() - birth.getUTCMonth();

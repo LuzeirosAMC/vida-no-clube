@@ -24,4 +24,7 @@
       "database_id": "9a92b3c6-af08-41c0-a8ac-501d6e246422"
     }
   ]
+  // Quando o R2 for aprovado, crie o bucket, acrescente uma vírgula depois do
+  // array d1_databases acima e adicione:
+  // "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "luzeiros-vida-no-clube-media" }]
 }

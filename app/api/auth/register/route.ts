@@ -5,6 +5,8 @@ import { users } from "../../../../db/schema";
 import { createSession, hashPassword } from "../../../../lib/site-auth";
 
 export async function POST(request: Request) {
+  // Aceita JSON para a interface interativa e form-urlencoded como fallback
+  // para navegadores onde o JavaScript falhar ou estiver desativado.
   const formRequest = request.headers.get("content-type")?.includes("application/x-www-form-urlencoded") || request.headers.get("content-type")?.includes("multipart/form-data");
   const data = formRequest ? Object.fromEntries(await request.formData()) as { login?: string; password?: string; birthDate?: string } : await request.json().catch(() => null) as { login?: string; password?: string; birthDate?: string } | null;
   const fail = (error: string, status: number) => formRequest ? NextResponse.redirect(new URL(`/cadastro?erro=${encodeURIComponent(error)}`, request.url), 303) : NextResponse.json({ error }, { status });
@@ -19,6 +21,7 @@ export async function POST(request: Request) {
   const db = getDb();
   if ((await db.select({ id: users.id }).from(users).where(eq(users.login, login)).limit(1))[0]) return fail("Este login já está em uso.", 409);
   const id = crypto.randomUUID();
+  // Cadastro público nunca concede privilégios, mesmo que seja a primeira conta.
   await db.insert(users).values({ id, login, passwordHash: await hashPassword(password), birthDate, role: "guest" });
   await createSession(id);
   const role = "guest";

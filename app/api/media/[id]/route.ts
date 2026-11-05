@@ -1,2 +1,45 @@
-import{env}from"cloudflare:workers";import{and,eq}from"drizzle-orm";import{NextResponse}from"next/server";import{getDb}from"../../../../db";import{submissions}from"../../../../db/schema";
-export async function GET(_request:Request,{params}:{params:Promise<{id:string}>}){const{id}=await params;const row=(await getDb().select({objectKey:submissions.objectKey,mimeType:submissions.mimeType}).from(submissions).where(and(eq(submissions.id,id),eq(submissions.status,"approved"))).limit(1))[0];if(!row?.objectKey)return new NextResponse("Não encontrado",{status:404});if(!env.BUCKET)return new NextResponse("Armazenamento de fotos temporariamente indisponível",{status:503});const object=await env.BUCKET.get(row.objectKey);if(!object)return new NextResponse("Não encontrado",{status:404});return new NextResponse(object.body,{headers:{"content-type":row.mimeType??object.httpMetadata?.contentType??"application/octet-stream","cache-control":"public, max-age=3600","x-content-type-options":"nosniff"}})}
+import { env } from "cloudflare:workers";
+import { and, eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { getDb } from "../../../../db";
+import { submissions } from "../../../../db/schema";
+
+/**
+ * Entrega uma foto privada do R2 somente quando o respectivo envio foi
+ * aprovado. O bucket não precisa e não deve possuir acesso público direto.
+ */
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  const row = (
+    await getDb()
+      .select({
+        objectKey: submissions.objectKey,
+        mimeType: submissions.mimeType,
+      })
+      .from(submissions)
+      .where(and(eq(submissions.id, id), eq(submissions.status, "approved")))
+      .limit(1)
+  )[0];
+
+  if (!row?.objectKey) return new NextResponse("Não encontrado", { status: 404 });
+  if (!env.BUCKET) {
+    return new NextResponse("Armazenamento de fotos temporariamente indisponível", {
+      status: 503,
+    });
+  }
+
+  const object = await env.BUCKET.get(row.objectKey);
+  if (!object) return new NextResponse("Não encontrado", { status: 404 });
+
+  return new NextResponse(object.body, {
+    headers: {
+      "content-type":
+        row.mimeType ?? object.httpMetadata?.contentType ?? "application/octet-stream",
+      "cache-control": "public, max-age=3600",
+      "x-content-type-options": "nosniff",
+    },
+  });
+}

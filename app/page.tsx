@@ -100,6 +100,8 @@ const activities = [
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  // A página inicial mostra somente os três relatos aprovados mais recentes.
+  // A listagem completa fica em /relatos.
   const communityMemories = await getDb().select({ id: submissions.id, title: submissions.title, body: submissions.body, kind: submissions.kind, objectKey: submissions.objectKey, author: users.login, createdAt: submissions.createdAt }).from(submissions).innerJoin(users, eq(submissions.authorId, users.id)).where(and(eq(submissions.status, "approved"), eq(submissions.kind, "comment"))).orderBy(desc(submissions.createdAt)).limit(3);
   return (
     <main>
@@ -448,7 +450,7 @@ export default async function Home() {
               <div>
                 <strong>Você também faz parte dessa memória?</strong>
                 <p>
-                  Membros já podem enviar comentários e relatos pelo portal. O envio
+                  Pessoas cadastradas já podem enviar comentários e relatos pelo portal. O envio
                   de fotos será liberado após a ativação do armazenamento do clube.
                 </p>
               </div>
@@ -534,7 +536,7 @@ export default async function Home() {
               </div>
             </div>
             <ul>
-              <li><Check size={17} /> Envio exclusivo para membros autorizados</li>
+              <li><Check size={17} /> Envio por usuários autenticados</li>
               <li><Check size={17} /> Revisão humana antes de aparecer no site</li>
               <li><Check size={17} /> Canal para correção ou remoção de conteúdo</li>
             </ul>
@@ -565,7 +567,7 @@ export default async function Home() {
             <span>Bandeirantes / Flamengo</span>
             <span>Rua dos Jesuítas, 223 · Contagem/MG</span>
             <a href="mailto:luzeirosamc@gmail.com">luzeirosamc@gmail.com</a>
-            <a href="/acesso"><LockKeyhole size={15} /> Portal dos membros</a>
+            <a href="/acesso"><LockKeyhole size={15} /> Portal do clube</a>
           </div>
           <div className="footer-social">
             <span>Siga a nossa história</span>

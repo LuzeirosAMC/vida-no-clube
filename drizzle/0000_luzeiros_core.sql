@@ -1,4 +1,4 @@
-CREATE TABLE `users` (`id` text PRIMARY KEY NOT NULL, `login` text NOT NULL, `password_hash` text NOT NULL, `birth_date` text NOT NULL, `role` text DEFAULT 'member' NOT NULL, `active` integer DEFAULT true NOT NULL, `created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL, `updated_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL);
+CREATE TABLE `users` (`id` text PRIMARY KEY NOT NULL, `login` text NOT NULL, `password_hash` text NOT NULL, `birth_date` text NOT NULL, `role` text DEFAULT 'guest' NOT NULL, `active` integer DEFAULT true NOT NULL, `created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL, `updated_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL);
 --> statement-breakpoint
 CREATE UNIQUE INDEX `users_login_unique` ON `users` (`login`);
 --> statement-breakpoint

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+// “Já doei” é uma declaração, não uma confirmação automática de transferência.
 export function DonationReport() {
   const [open, setOpen] = useState(false); const [message, setMessage] = useState(""); const [busy, setBusy] = useState(false);
   async function submit(event: React.FormEvent<HTMLFormElement>) { event.preventDefault(); if(busy)return; setBusy(true); setMessage(""); const target=event.currentTarget; const form = new FormData(target); try { const response = await fetch("/api/donations/report", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(Object.fromEntries(form)) }); const result = await response.json().catch(() => ({})); setMessage(response.ok ? "Recebemos seu registro. A tesouraria fará a conferência." : result.error ?? "Não foi possível registrar."); if (response.ok) target.reset(); } catch { setMessage("Não foi possível conectar ao servidor. Tente novamente."); } finally { setBusy(false); } }

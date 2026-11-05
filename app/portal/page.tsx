@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
@@ -71,13 +72,13 @@ export default async function PortalPage() {
     <main className="portal-shell">
       <div className="portal-layout">
         <aside className="portal-sidebar">
-          <a className="portal-brand" href="/">
+          <Link className="portal-brand" href="/">
             <Image src="/media/logo-luzeiros.jpg" alt="" width={42} height={42} />
             <span>
               <strong>Luzeiros</strong>
               <small>Portal do clube</small>
             </span>
-          </a>
+          </Link>
 
           <div className="portal-role">
             <small>{roleNames[user.role]}</small>
@@ -92,9 +93,9 @@ export default async function PortalPage() {
             <a href="#configuracoes"><Settings size={17} /> Configurações</a>
           </nav>
 
-          <a className="portal-back" href="/">
+          <Link className="portal-back" href="/">
             <ArrowLeft size={16} /> Voltar ao site
-          </a>
+          </Link>
         </aside>
 
         <section className="portal-main" id="visao-geral">

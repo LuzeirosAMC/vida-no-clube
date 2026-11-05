@@ -40,6 +40,7 @@ const destinations = [
 ];
 
 export default async function DonationsPage() {
+  // enabled permite retirar os dados do ar sem apagá-los do painel.
   const bank = (await getDb().select().from(bankDetails).where(eq(bankDetails.id, 1)).limit(1))[0];
   const bankAvailable = Boolean(bank?.enabled && bank.pixKey && bank.accountHolder);
   return (
